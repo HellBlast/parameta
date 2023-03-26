@@ -3,6 +3,8 @@ package com.example.crudrapido.controller;
 import com.example.crudrapido.entity.Empleado;
 import com.example.crudrapido.service.EmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,7 @@ public class EmpleadoController {
     private EmpleadoService empleadoService;
 
     @PostMapping
-    public String save(@RequestBody Empleado empleado){
+    public ResponseEntity<String> save(@RequestBody Empleado empleado){
         LocalDate fechaActual = LocalDate.now();
         LocalDate fecha_na = empleado.getNacimiento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate fecha_vi = empleado.getVinculacion().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;
@@ -30,21 +32,31 @@ public class EmpleadoController {
         int year= tiempo.getYears();
         int months= tiempo.getMonths();
         if (edad<18) {
-            return "El empleado debe ser mayor de edad.";
+            String mensaje="El empleado debe ser mayor de edad.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje);
         } else {
             empleadoService.save(empleado);
-            String mensaje="Id:"+empleado.getId()+"\n" +
-                    "Nombres:"+empleado.getNombre()+"\n" +
-                    "Apellidos:"+empleado.getApellido()+"\n" +
-                    "Tipo de Documento:"+empleado.getTipo()+"\n" +
-                    "Numero de Documento:"+empleado.getNumero()+"\n" +
-                    "Fecha de Nacimiento:"+empleado.getNacimiento()+"\n" +
-                    "fecha de Vinculacion:"+empleado.getVinculacion()+"\n" +
-                    "Cargo:"+empleado.getCargo()+"\n" +
-                    "Salario:"+empleado.getSalario()+"\n";
-            mensaje+="Timpo de vinculacion a la compañia (años:"+year+", meses:"+months+").\n";
-            mensaje+="Edad actual del empleado(años: "+diferencia.getYears()+", meses: "+diferencia.getMonths()+", dìas: "+diferencia.getDays();
-            return mensaje;
+            String mensaje="{" +
+                    "\"id\": "+empleado.getId()+"," +
+                    "\"nombres\": \""+empleado.getNombre()+"\"," +
+                    "\"apellidos\": \""+empleado.getApellido()+"\"," +
+                    "\"tipo_documento\": \""+empleado.getTipo()+"\"," +
+                    "\"numero_documento\": "+empleado.getNumero()+"," +
+                    "\"fecha_nacimiento\": \""+empleado.getNacimiento()+"\"," +
+                    "\"fecha_vinculacion\": \""+empleado.getVinculacion()+"\"," +
+                    "\"cargo\": \""+empleado.getCargo()+"\"," +
+                    "\"salario\": "+empleado.getSalario()+"," +
+                    "\"tiempo_vinculacion\": {" +
+                    "\"anios\": "+year+"," +
+                    "\"meses\": "+months+"" +
+                    "}," +
+                    "\"edad\": {" +
+                    "\"anios\": "+diferencia.getYears()+"," +
+                    "\"meses\": "+diferencia.getMonths()+"," +
+                    "\"dias\": "+diferencia.getDays()+"" +
+                    "}" +
+                    "}";
+            return ResponseEntity.ok(mensaje);
         }
     }
 }
