@@ -33,7 +33,16 @@ public class EmpleadoController {
             return "El empleado debe ser mayor de edad.";
         } else {
             empleadoService.save(empleado);
-            String mensaje="Timpo de vinculacion a la compañia (años:"+year+", meses:"+months+").\n";
+            String mensaje="Id:"+empleado.getId()+"\n" +
+                    "Nombres:"+empleado.getNombre()+"\n" +
+                    "Apellidos:"+empleado.getApellido()+"\n" +
+                    "Tipo de Documento:"+empleado.getTipo()+"\n" +
+                    "Numero de Documento:"+empleado.getNumero()+"\n" +
+                    "Fecha de Nacimiento:"+empleado.getNacimiento()+"\n" +
+                    "fecha de Vinculacion:"+empleado.getVinculacion()+"\n" +
+                    "Cargo:"+empleado.getCargo()+"\n" +
+                    "Salario:"+empleado.getSalario()+"\n";
+            mensaje+="Timpo de vinculacion a la compañia (años:"+year+", meses:"+months+").\n";
             mensaje+="Edad actual del empleado(años: "+diferencia.getYears()+", meses: "+diferencia.getMonths()+", dìas: "+diferencia.getDays();
             return mensaje;
         }
